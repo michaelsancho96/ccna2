@@ -209,7 +209,7 @@ dial-peer voice 1 pots
    destination-pattern 5200
    port 0/0/0
 dial-peer voice 2 pots
-   destination-pattern 5201
+   destination-pattern 5201 
    port 0/0/1
 dial-peer voice 3 pots
    destination-pattern 5202
