@@ -30,7 +30,7 @@ Interface vlan 14
 	ip add 10.0.2.1 255.255.254.0
 ip dhcp excluded-add 10.0.64.1 10.0.64.100
 ip dhcp excluded-add 10.0.64.1 10.0.64.100	
-ip dhcp excluded-add 10.0.16.1 10.0.16.100
+ip dhcp excluded-add 10.0.16.1-17
 ip dhcp excluded-add 10.0.2.1 10.0.2.100
 ip dhcp pool COCACOLA
 	network 10.0.64.0 255.255.192.0
