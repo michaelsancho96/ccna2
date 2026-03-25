@@ -1,0 +1,199 @@
+coretaas 10.1.0.6/30
+corebaba 10.1.0.13/30
+
+
+!@coretaas
+conf t
+	int fa0/9
+	no sw
+	ip add 10.1.0.6 255.255.255.252
+	end
+	
+	
+!@corebaba
+conf t
+	int fa0/9
+	no sw
+	ip add 10.1.0.13 255.255.255.252
+	end
+	
+
+
+
+
+*************** FIND THE NETWORK ***********
+
+172.28.228.144/18
+
+1.) rivan format /18 = 3rd 64i
+2.) count via 64i
+
+		172.28.0.0
+		172.28.64.0
+		172.28.128.0
+		172.28.192.0
+		172.29.0.0
+
+		172.28.192.0 /18
+ANSWER	172.28.192.1
+
+
+172.28.228.144/21
+
+1.)/21 = 3rd 8i
+2.)
+
+
+
+
+
+
+*****static routing*****
+
+!@R1
+conf t
+	ip route [dest] [mask] [next hop/egress int/exit int]
+	end
+	
+sample:
+
+
+conf t
+	ip route 10.1.1.5 255.255.255.255 10.1.1.2
+	end
+	
+	
+conf t
+	ip route 10.1.1.6 255.255.255.255 10.1.1.9
+	end
+	
+	
+!@R3
+
+conf t
+	ip route 10.2.1.1 255.255.255.255 0.0.0.0
+	end
+	
+	
+conf t
+	 no ip route 10.1.1.1 255.255.255.255 10.1.1.5	 
+	 end
+	 
+	 
+conf t
+	 ip route 10.1.1.4 255.255.255.252 10.1.1.2
+	 ip route 10.1.1.8 255.255.255.252 10.1.1.2
+	 end
+	 
+	 
+	 conf t
+	 ip route 10.1.1.4 255.255.255.252 10.1.1.9
+	 ip route 10.1.1.0 255.255.255.252 10.1.1.9
+	 end
+	 
+	 
+conf t
+	ip route 10.1.1.8 255.255.255.255 10.1.1.6
+	end
+	
+	
+	
+*********DYNAMIC ROUTING PROTOCOLS******************
+
+#IGP
+	-Link-state
+		*OSPF
+		*ISIS
+	-Distance Vector
+		*EIGRP
+		*RIP
+#EGP
+	-BGP
+	
+	
+	
+	
+	
+	
+	
+config t
+ router eigrp  100
+  no auto-summary
+  network 10.1.4.8  0.0.0.3
+  network 10.2.1.0  __.__.__.__
+  network 10.2.2.0  __.__.__.__
+  network 192.168.1.1  __.__.__.__
+  end
+  
+ show ip eigrp neigh
+
+bandwidth 
+D1 > VLAN 10 1_000_000
+R4 > D1 10_000
+
+
+delay
+R4 : 1_000 usec
+D1 : 10 usec
+
+
+
+conf t
+ router ospf  1
+  router-id 4.4.4.4
+  network 4.4.4.4  0.0.0.0 area 0
+  network 10.1.1.8  0.0.0.3 area 0
+  end
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+ !@coreBABA
+ 
+ conf t
+	int fa0/9
+	no ip add
+	switch
+	monitor session 1 source int g0/1 both
+	monitor session 1 destination int fa0/1 , fa0/9
+	end
+	
+	
+	
+D - down
+I - init
+T - two-way
+E - exstart
+E - exchange
+L - loading
+F - full
+
+
+
+
+!@I2 - PLDT
+config t
+ router bgp 2
+ bgp log-neighbor-changes
+ neighbor 24.2.4.4 remote-as 45
+ neighbor 25.2.5.5  remote-as 45
+ neighbor 32.3.2.3  remote-as 3
+ neighbor 207.7.7.1  remote-as 1
+ address-family ipv4
+  neighbor 24.2.4.4  activate
+  neighbor 25.2.5.5  activate
+  neighbor 32.3.2.3  activate
+  neighbor 207.7.7.1  activate
+  network 207.7.7.0 mask 255.255.255.0
+  network 22.22.22.22 mask 255.255.255.255
+  network 24.2.5.0 mask 255.255.255.0
+  network 25.2.5.0 mask 255.255.255.0
+  network 32.3.2.0 mask 255.255.255.0
+  end
