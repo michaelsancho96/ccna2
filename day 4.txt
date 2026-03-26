@@ -1,0 +1,298 @@
+task 3 block all popcorn
+
+
+config t
+NO ip access-list standard NOPORN
+ip access-list standard NOPORN
+DENY 66.254.0.0 0.0.255.255
+deny 161.49.0.0 0.0.255.255
+DENY 104.21.0.0 0.0.255.255
+DENY 68.235.0.0 0.0.255.255
+DENY 104.17.0.0 0.0.255.255
+DENY 88.208.0.0 0.0.255.255
+DENY 208.77.0.0 0.0.255.255
+DENY 172.67.0.0 0.0.255.255
+DENY 45.60.157.0 0.0.0.255
+Permit Any
+Int Gi 1
+ ip access-group NOPORN in
+end
+
+config t
+Int gi 1
+ NO ip access-group NOPORN in
+end
+
+
+
+
+***********STANDARD ACL*********************
+
+config t
+no access-list 25
+access-list 25 DENY 66.254.0.0 0.0.255.255
+access-list 25 DENY 104.21.0.0 0.0.255.255
+access-list 25 DENY 68.235.0.0 0.0.255.255
+access-list 25 DENY 104.17.0.0 0.0.255.255
+access-list 25 DENY 88.208.0.0 0.0.255.255
+access-list 25 DENY 208.77.0.0 0.0.255.255
+access-list 25 DENY 172.67.0.0 0.0.255.255
+access-list 25 DENY 50.6.160.0 0.0.0.255
+access-list 25 DENY 155.137.92.0 0.0.0.255
+access-list 25 DENY 45.60.157.0 0.0.0.255
+access-list 25 permit Any
+Int gi 1
+ ip access-group 25 in
+end
+
+
+Goberno: allow all Porn, for freedom of expression!
+config t
+Int gi 1
+ NO ip access-group 25 in
+end
+
+
+
+
+
+task
+
+
+config t
+NO ip access-list standard NOTORS
+ip access-list standard NOTORS
+DENY   162.159.0.0   0.0.255.255
+DENY   104.21.0.0   0.0.255.255
+DENY   172.67.0.0   0.0.255.255
+DENY   84.32.0.0   0.0.255.255
+DENY   76.223.0.0   0.0.255.255
+DENY   13.248.0.0   0.0.255.255
+DENY   104.21.0.0   0.0.255.255
+DENY   104.21.0.0   0.0.255.255
+DENY   104.26.0.0   0.0.255.255
+DENY   95.211.0.0   0.0.255.255
+Permit Any
+Int Gi 1
+ ip access-group NOTORS in
+end
+
+
+
+config t
+Int gi 1
+ NO ip access-group NOTORS in
+end
+
+
+
+
+******************************
+
+
+config t
+int Gi 3
+ no shut
+ ip add 192.168.103.11 255.255.255.0
+ ip add 192.168.103.10 255.255.255.0 Secondary
+service finger
+service tcp-small-servers
+service udp-small-servers
+ip dns server
+ip http server
+ip http secure-server
+telephony-service
+max-ephone 2
+max-dn 4
+ip source-address 192.168.103.11 port 2000
+voice service voip
+ allow-connections sip to sip
+ sip
+   registrar server expires max 600 min 60
+ voice register global
+  mode cme
+  source-address 192.168.103.11 port 5060
+  max-dn 12
+  max-pool 12
+!Make Ping EASY
+ip host bet10.com 192.168.103.10
+ip host bet11.com 192.168.103.11
+
+
+
+
+
+
+
+
+********how to create a firewall policy**************
+
+ex. you are hired as a SOC L3 with 150k/month, create a policy
+
+bet10.com only http,https,dns is open
+bet11.com only voip ports: sip sccp, ping is open
+
+
+TCP (data)
+UDP (voice)
+icmp
+ip
+
+			PROTOCOL            HACKER                   VICTIM                PORT
+
+
+conf t
+no ip access-list extended POLICY1
+ip access-list extended POLICY1
+permit      tcp        any       host                 192.168.103.10           eq 80
+permit      tcp		   any 		 host				  192.168.103.10 eq 443
+permit      tcp  	   any       host 				  192.168.103.10 eq 53
+permit      tcp        any 	 	 host 				  192.168.103.11 eq 5060
+permit      tcp        any 	 	 host                 192.168.103.11 eq 2000
+permit      icmp       any	 	 host                 192.168.103.11
+	int gi 3
+	ip access-group POLICY1 in
+	do sh ip access-list POLICY1
+
+
+---------remove policy conf------------*
+
+conf t
+
+int gi 3
+	no ip access-group POLICY1 in
+	do sh ip access-list POLICY1
+	
+	
+***********************************************	
+
+	
+ex 2.) you are hired as a SOC L3 with 150k/month, create a policy
+
+bet10.com only https,ping is open
+bet11.com only voip ports: ssh, dns is open
+
+conf t
+no ip access-list extended POLICY2
+ip access-list extended POLICY2
+permit icmp  any host 192.168.103.10
+permit tcp  any host 192.168.103.10 eq 443
+permit tcp  any host 192.168.103.11 eq 22
+permit tcp  any host 192.168.103.11 eq 53
+	int gi 3
+	ip access-group POLICY2 in
+	do sh ip access-list POLICY2
+
+	
+---------remove policy conf------------
+	
+conf t
+
+int gi 1
+	no ip access-group POLICY2 in
+	do sh ip access-list POLICY2	
+	
+	
+	
+	
+************************************************
+
+
+ex 3.) you are hired as a SOC L3 with 150k/month, create a policy
+
+bet10.com only ssh,https,dns,sip is open
+bet11.com only telnet,ssh,http is open	
+	
+
+conf t
+no ip access-list extended POLICY3
+ip access-list extended POLICY3
+permit tcp  any host 192.168.103.10 eq 22
+permit tcp  any host 192.168.103.10 eq 443
+permit tcp  any host 192.168.103.10 eq 53
+permit tcp  any host 192.168.103.10 eq 5060
+permit tcp  any host 192.168.103.11 eq 23
+permit tcp  any host 192.168.103.11 eq 22
+permit tcp  any host 192.168.103.11 eq 80
+	int gi 1
+	ip access-group POLICY3 in
+	do sh ip access-list POLICY3
+
+
+---------remove policy conf------------
+	
+conf t
+
+int gi 3
+	no ip access-group POLICY3 in
+	do sh ip access-list POLICY3
+	
+	
+show run 
+	
+	
+	
+	
+	
+********************PAT-NAT*********************************
+PORT ADDRESS TRANSLATION/NETWORK ADDRESS TRANSLATION
+
+
+bet10.com:192.168.103.21:80,22,443      208.8.8.50:80,443,8080,8443 
+bet10.com:192.168.103.22:80,22,443
+
+
+CONF-1/bldg1:
+sudo su
+ifconfig eth0 192.168.103.21 netmask 255.255.255.0 up
+route add default gw 192.168.103.11
+ping 192.168.103.11
+
+
+Confi-2/bldg2:
+sudo su
+ifconfig eth0 192.168.103.22 netmask 255.255.255.0 up
+route add default gw 192.168.103.11
+ping 192.168.103.11
+
+
+test IN mozilla
+
+http://192.168.103.21/
+http://192.168.103.22/	
+
+
+
+
+******************CREATING A WEB PROXY OR HIDING BEHIND NAT:**********************
+
+config t
+no access-list 8
+access-list 8 permit HOST 192.168.103.21
+access-list 8 permit HOST 192.168.103.22
+Int Gi 3
+ ip nat Inside
+Int gi 1
+ ip nat Outside
+IP Nat inside source static tcp 192.168.103.21 80 208.8.8.50 80
+IP Nat inside source static tcp 192.168.103.22 80 208.8.8.50 8080
+IP Nat inside source static tcp 192.168.103.21 443 208.8.8.50 443
+IP Nat inside source static tcp 192.168.103.22 443 208.8.8.50 8443
+IP nat inside source list 8 int gi 1 Overload
+end
+
+show ip nat translation  
+
+
+
+*************CONFIGURING CISCO NETWORK SERVICES: *******************
+
+
+
+Configure R1-Fw to use time.google.com ntp server.
+config t
+ntp server time.google.com
+end
+sh ntp assoc
+sh ntp status
+show ntp associations detail
