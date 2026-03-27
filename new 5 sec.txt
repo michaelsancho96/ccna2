@@ -1,0 +1,66 @@
+**********************SETUP IPV6*********************
+
+config t
+ipv6 unicast-routing
+int loopback 0
+ ipv6 enable
+ Ipv6 address autoconfig
+int loopback 1
+ no shutdown
+ ipv6 add cafe:cafe:cafe:cafe:0480::/73 EUI-64
+int loopback 2
+ ipv6 add cafe:cafe:cafe:cafe:0500::/73 EUI-64
+int loopback 3
+ ipv6 add cafe:cafe:cafe:cafe:0580::52/73
+ do sh ipv6 int brief
+end
+
+
+--------------------------------------------------------
+
+
+
+!@UTM-jp
+
+conf t
+	ip route 11.11.11.101 255.255.255.255 208.8.8.11
+	end
+	
+	
+	
+	
+	
+!@UTM-PH
+conf t
+ int g1
+  ip nat outside
+ int g3
+  ip nat inside
+ !
+ ip access-list extended NAT
+  permit ip 11.11.11.96 0.0.0.31  any 
+ !
+ ip nat inside source list NAT int g1 overload
+ ip  nat inside source static tcp 11.11.11.101 22 208.8.8.100 2222
+ end
+ 
+ 
+ 
+ !@UTM-JP
+conf t
+ int g1
+  ip nat outside
+ int g3
+  ip nat inside
+ !
+ ip access-list extended NAT
+  permit ip 21.21.21.208 0.0.0.15  any 
+ !
+ ip nat inside source list NAT int g1 overload
+ ip  nat inside source static tcp 21.21.21.211 22 208.8.8.200 2222
+ end
+ 
+
+	
+
+	
